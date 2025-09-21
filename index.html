@@ -10,12 +10,18 @@
 
         <script src="libraries/p5.min.js"></script>
         <script src="libraries/p5.sound.min.js"></script>
+        <script src="https://cdn.tailwindcss.com"></script>
     </head>
 
-    <body>
-        <span>
+    <body class="flex flex-col gap-3">
+        <span class="text-center text-2xl">
             <p>Nuttapong Nakawirot</p>
             <p>6801012610260</p>
+        </span>
+        <span class="flex m-0 text-center justify-center">
+            <a href="https://github.com/qwrtsdev/A2_Sudoku_Web" target="_blank" class="text-blue-700">Open Repository</a>
+            <p>&#12539;</p>
+            <p onclick="instantSudokuSolve()" class="hover:cursor-pointer text-blue-700">Instant Solve</p>
         </span>
         <script src="sketch.js"></script>
     </body>
