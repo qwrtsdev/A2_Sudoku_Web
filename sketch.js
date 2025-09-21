@@ -5,7 +5,9 @@ let selectedCol = -1; // currently selected cell (column)
 
 function setup() {
     createCanvas(500, 500);
+
     let result = generateSudokuNumbers();
+
     sudokuGrid = result.puzzle;
     fixedCells = result.fixed;
 }
@@ -33,8 +35,10 @@ function draw() {
     if (selectedRow >= 0 && selectedCol >= 0) {
         fill(173, 216, 230); // light blue
         noStroke();
+
         let cellWidth = width / 9;
         let cellHeight = height / 9;
+
         rect(
             selectedCol * cellWidth,
             selectedRow * cellHeight,
