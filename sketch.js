@@ -89,7 +89,6 @@ function drawNumbers() {
     }
 }
 
-// p5js event function when mouse is pressed
 function mousePressed() {
     // calculate which cell was clicked (mouse position)
     let cellWidth = width / 9;
@@ -109,7 +108,6 @@ function mousePressed() {
     }
 }
 
-// p5js event function when a keyboard is pressed
 function keyPressed() {
     // check if a cell is selected
     if (selectedRow >= 0 && selectedCol >= 0) {
