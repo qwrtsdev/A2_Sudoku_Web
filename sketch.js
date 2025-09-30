@@ -4,13 +4,7 @@ let selectedRow = -1; // currently selected cell (row)
 let selectedCol = -1; // currently selected cell (column)
 
 function setup() {
-    createCanvas(500, 500); // create a 500x500 pixel canvas
-
-    let result = generateSudokuNumbers(); // run the function and parse results to variable
-
-    // assign parsed results to global variables
-    sudokuGrid = result.puzzle;
-    fixedCells = result.fixed;
+    createCanvas(500, 500);
 }
 
 function draw() {
@@ -20,7 +14,7 @@ function draw() {
 
     highlightSelectedCell(); // highlight the selected cell
 
-    drawNumbers(); // draw the numbers in the grid
+    // drawNumbers(); // draw the numbers in the grid
 }
 
 function drawSudokuGrid() {
@@ -60,34 +54,34 @@ function highlightSelectedCell() {
     }
 }
 
-function drawNumbers() {
-    // display numbers in the grid
-    if (sudokuGrid) {
-        noStroke(); // remove stroke for text
-        textAlign(CENTER, CENTER); // align text to center of cell
-        textSize(20); // set text size
+// function drawNumbers() {
+//     // display numbers in the grid
+//     if (sudokuGrid) {
+//         noStroke(); // remove stroke for text
+//         textAlign(CENTER, CENTER); // align text to center of cell
+//         textSize(20); // set text size
 
-        for (let row = 0; row < 9; row++) {
-            // loop through rows
-            for (let col = 0; col < 9; col++) {
-                // loop through columns
-                if (sudokuGrid[row][col] !== 0) {
-                    // if number is not zero
-                    if (fixedCells && fixedCells[row][col]) {
-                        fill(0); // black for fixed numbers
-                    } else {
-                        fill(29, 78, 216); // blue for user numbers
-                    }
+//         for (let row = 0; row < 9; row++) {
+//             // loop through rows
+//             for (let col = 0; col < 9; col++) {
+//                 // loop through columns
+//                 if (sudokuGrid[row][col] !== 0) {
+//                     // if number is not zero
+//                     if (fixedCells && fixedCells[row][col]) {
+//                         fill(0); // black for fixed numbers
+//                     } else {
+//                         fill(29, 78, 216); // blue for user numbers
+//                     }
 
-                    // calculate position from width and height of rows and columns
-                    let x = (col * width) / 9 + width / 18;
-                    let y = (row * height) / 9 + height / 18;
-                    text(sudokuGrid[row][col], x, y); // place number in cell
-                }
-            }
-        }
-    }
-}
+//                     // calculate position from width and height of rows and columns
+//                     let x = (col * width) / 9 + width / 18;
+//                     let y = (row * height) / 9 + height / 18;
+//                     text(sudokuGrid[row][col], x, y); // place number in cell
+//                 }
+//             }
+//         }
+//     }
+// }
 
 function mousePressed() {
     // calculate which cell was clicked (mouse position)
@@ -130,90 +124,6 @@ function keyPressed() {
     }
 }
 
-function generateSudokuNumbers() {
-    // create a 9x9 grid filled with zeros
-    let grid = [];
-    for (let i = 0; i < 9; i++) {
-        grid[i] = [];
-        for (let j = 0; j < 9; j++) {
-            grid[i][j] = 0;
-        }
-    }
-
-    // generate a Sudoku
-    solveSudoku(grid);
-
-    // create a puzzle by removing some numbers (but keeping only 20-30 numbers)
-    let puzzle = []; // copy of original grid
-    let fixed = []; // copy of fixed numbers in cells
-    for (let i = 0; i < 9; i++) {
-        puzzle[i] = [];
-        fixed[i] = [];
-        for (let j = 0; j < 9; j++) {
-            puzzle[i][j] = grid[i][j]; // copy the number
-            fixed[i][j] = true; // initially make all cells to be fixed numbers
-        }
-    }
-
-    // remove numbers randomly
-    let numbersToRemove = 55; // remove 55 numbers
-    for (let i = 0; i < numbersToRemove; i++) {
-        let row = Math.floor(Math.random() * 9); // random row
-        let col = Math.floor(Math.random() * 9); // random column
-        if (puzzle[row][col] !== 0) {
-            puzzle[row][col] = 0;
-            fixed[row][col] = false; // Mark as not fixed (editable)
-        } else {
-            i--; // try again if cell is already empty
-        }
-    }
-
-    // console.log(puzzle);
-    return { puzzle: puzzle, fixed: fixed };
-}
-
-function solveSudoku(grid) {
-    for (let row = 0; row < 9; row++) {
-        for (let col = 0; col < 9; col++) {
-            if (grid[row][col] === 0) {
-                // try numbers 1-9
-                for (let num = 1; num <= 9; num++) {
-                    if (isValid(grid, row, col, num)) {
-                        grid[row][col] = num;
-
-                        if (solveSudoku(grid)) {
-                            return true;
-                        }
-
-                        grid[row][col] = 0;
-                    }
-                }
-                return false;
-            }
-        }
-    }
-    return true;
-}
-
-function isValid(grid, row, col, num) {
-    // check all rows
-    for (let x = 0; x < 9; x++) {
-        if (grid[row][x] === num) return false;
-    }
-
-    // check all columns
-    for (let x = 0; x < 9; x++) {
-        if (grid[x][col] === num) return false;
-    }
-
-    // check 3x3 box
-    let startRow = row - (row % 3);
-    let startCol = col - (col % 3);
-    for (let i = 0; i < 3; i++) {
-        for (let j = 0; j < 3; j++) {
-            if (grid[i + startRow][j + startCol] === num) return false;
-        }
-    }
-
-    return true;
+async function loadSudokuFromFile() {
+    let file = await window.showOpenFilePicker(options);
 }
