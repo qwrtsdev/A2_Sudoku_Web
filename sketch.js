@@ -1,23 +1,40 @@
 let sudokuGrid; // current state of the Sudoku grid
+let sudokuGridCheck; // check sudoku fixed numbers
 let fixedCells; // track pre-generated grids
 let selectedRow = -1; // currently selected cell (row)
 let selectedCol = -1; // currently selected cell (column)
 
 function setup() {
     createCanvas(500, 500);
+
+    sudokuGrid = [
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    ];
+
+    sudokuGridCheck = [
+        [true, true, true, true, true, true, true, true, true],
+        [true, true, true, true, true, true, true, true, true],
+        [true, true, true, true, true, true, true, true, true],
+        [true, true, true, true, true, true, true, true, true],
+        [true, true, true, true, true, true, true, true, true],
+        [true, true, true, true, true, true, true, true, true],
+        [true, true, true, true, true, true, true, true, true],
+        [true, true, true, true, true, true, true, true, true],
+        [true, true, true, true, true, true, true, true, true],
+    ];
 }
 
 function draw() {
     background(220); // set background color
 
-    drawSudokuGrid(); // draw the Sudoku grid
-
-    highlightSelectedCell(); // highlight the selected cell
-
-    // drawNumbers(); // draw the numbers in the grid
-}
-
-function drawSudokuGrid() {
     // draw tiny 3*3 grids with thin lines
     stroke(0);
     strokeWeight(1);
@@ -33,6 +50,37 @@ function drawSudokuGrid() {
     line((2 * width) / 3, 0, (2 * width) / 3, height);
     line(0, height / 3, width, height / 3);
     line(0, (2 * height) / 3, width, (2 * height) / 3);
+
+    // display numbers in the grid
+    if (sudokuGrid) {
+        noStroke(); // remove stroke for text
+        textAlign(CENTER, CENTER); // align text to center of cell
+        textSize(20); // set text size
+
+        for (let row = 0; row < 9; row++) {
+            // loop through rows
+            for (let col = 0; col < 9; col++) {
+                // loop through columns
+                if (sudokuGrid[row][col] !== 0) {
+                    // if number is not zero
+                    if (fixedCells && fixedCells[row][col]) {
+                        fill(0); // black for fixed numbers
+                    } else {
+                        fill(29, 78, 216); // blue for user numbers
+                    }
+
+                    // calculate position from width and height of rows and columns
+                    let x = (col * width) / 9 + width / 18;
+                    let y = (row * height) / 9 + height / 18;
+                    text(sudokuGrid[row][col], x, y); // place number in cell
+                }
+            }
+        }
+    }
+
+    highlightSelectedCell(); // highlight the selected cell
+
+    drawNumbers(); // draw the numbers in the grid
 }
 
 function highlightSelectedCell() {
@@ -54,35 +102,36 @@ function highlightSelectedCell() {
     }
 }
 
-// function drawNumbers() {
-//     // display numbers in the grid
-//     if (sudokuGrid) {
-//         noStroke(); // remove stroke for text
-//         textAlign(CENTER, CENTER); // align text to center of cell
-//         textSize(20); // set text size
+function drawNumbers() {
+    // display numbers in the grid
+    if (sudokuGrid) {
+        noStroke(); // remove stroke for text
+        textAlign(CENTER, CENTER); // align text to center of cell
+        textSize(20); // set text size
 
-//         for (let row = 0; row < 9; row++) {
-//             // loop through rows
-//             for (let col = 0; col < 9; col++) {
-//                 // loop through columns
-//                 if (sudokuGrid[row][col] !== 0) {
-//                     // if number is not zero
-//                     if (fixedCells && fixedCells[row][col]) {
-//                         fill(0); // black for fixed numbers
-//                     } else {
-//                         fill(29, 78, 216); // blue for user numbers
-//                     }
+        for (let row = 0; row < 9; row++) {
+            // loop through rows
+            for (let col = 0; col < 9; col++) {
+                // loop through columns
+                if (sudokuGrid[row][col] !== 0) {
+                    // if number is not zero
+                    if (fixedCells && fixedCells[row][col]) {
+                        fill(0); // black for fixed numbers
+                    } else {
+                        fill(29, 78, 216); // blue for user numbers
+                    }
 
-//                     // calculate position from width and height of rows and columns
-//                     let x = (col * width) / 9 + width / 18;
-//                     let y = (row * height) / 9 + height / 18;
-//                     text(sudokuGrid[row][col], x, y); // place number in cell
-//                 }
-//             }
-//         }
-//     }
-// }
+                    // calculate position from width and height of rows and columns
+                    let x = (col * width) / 9 + width / 18;
+                    let y = (row * height) / 9 + height / 18;
+                    text(sudokuGrid[row][col], x, y); // place number in cell
+                }
+            }
+        }
+    }
+}
 
+// p5js event function when mouse is pressed
 function mousePressed() {
     // calculate which cell was clicked (mouse position)
     let cellWidth = width / 9;
@@ -102,6 +151,7 @@ function mousePressed() {
     }
 }
 
+// p5js event function when a keyboard is pressed
 function keyPressed() {
     // check if a cell is selected
     if (selectedRow >= 0 && selectedCol >= 0) {
@@ -124,6 +174,44 @@ function keyPressed() {
     }
 }
 
-async function loadSudokuFromFile() {
-    let file = await window.showOpenFilePicker(options);
+function saveFile() {
+    let content = sudokuGrid
+        .map((row) => row.join(" "))
+        .join("\n")
+        .trim();
+
+    const blob = new Blob([content], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    const date = new Date();
+    a.download = `sudoku_${date.toISOString()}.sudoku`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+function loadFile() {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".sudoku";
+
+    input.onchange = async (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const text = await file.text();
+            sudokuGrid = text
+                .trim()
+                .split("\n")
+                .map((line) =>
+                    line
+                        .trim()
+                        .split(" ")
+                        .map((num) => parseInt(num))
+                );
+            fixedCells = sudokuGrid.map((row) => row.map((num) => num !== 0));
+        }
+    };
+    input.click();
 }
