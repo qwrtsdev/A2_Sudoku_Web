@@ -1,5 +1,4 @@
 let sudokuGrid; // current state of the Sudoku grid
-let sudokuGridCheck; // check sudoku fixed numbers
 let fixedCells; // track pre-generated grids
 let selectedRow = -1; // currently selected cell (row)
 let selectedCol = -1; // currently selected cell (column)
@@ -8,27 +7,28 @@ function setup() {
     createCanvas(500, 500);
 
     sudokuGrid = [
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    ];
-
-    sudokuGridCheck = [
-        [true, true, true, true, true, true, true, true, true],
-        [true, true, true, true, true, true, true, true, true],
-        [true, true, true, true, true, true, true, true, true],
-        [true, true, true, true, true, true, true, true, true],
-        [true, true, true, true, true, true, true, true, true],
-        [true, true, true, true, true, true, true, true, true],
-        [true, true, true, true, true, true, true, true, true],
-        [true, true, true, true, true, true, true, true, true],
-        [true, true, true, true, true, true, true, true, true],
+        [
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        ],
+        [
+            [true, true, true, true, true, true, true, true, true],
+            [true, true, true, true, true, true, true, true, true],
+            [true, true, true, true, true, true, true, true, true],
+            [true, true, true, true, true, true, true, true, true],
+            [true, true, true, true, true, true, true, true, true],
+            [true, true, true, true, true, true, true, true, true],
+            [true, true, true, true, true, true, true, true, true],
+            [true, true, true, true, true, true, true, true, true],
+            [true, true, true, true, true, true, true, true, true],
+        ],
     ];
 }
 
@@ -50,33 +50,6 @@ function draw() {
     line((2 * width) / 3, 0, (2 * width) / 3, height);
     line(0, height / 3, width, height / 3);
     line(0, (2 * height) / 3, width, (2 * height) / 3);
-
-    // display numbers in the grid
-    if (sudokuGrid) {
-        noStroke(); // remove stroke for text
-        textAlign(CENTER, CENTER); // align text to center of cell
-        textSize(20); // set text size
-
-        for (let row = 0; row < 9; row++) {
-            // loop through rows
-            for (let col = 0; col < 9; col++) {
-                // loop through columns
-                if (sudokuGrid[row][col] !== 0) {
-                    // if number is not zero
-                    if (fixedCells && fixedCells[row][col]) {
-                        fill(0); // black for fixed numbers
-                    } else {
-                        fill(29, 78, 216); // blue for user numbers
-                    }
-
-                    // calculate position from width and height of rows and columns
-                    let x = (col * width) / 9 + width / 18;
-                    let y = (row * height) / 9 + height / 18;
-                    text(sudokuGrid[row][col], x, y); // place number in cell
-                }
-            }
-        }
-    }
 
     highlightSelectedCell(); // highlight the selected cell
 
@@ -104,7 +77,7 @@ function highlightSelectedCell() {
 
 function drawNumbers() {
     // display numbers in the grid
-    if (sudokuGrid) {
+    if (sudokuGrid && sudokuGrid[0] && sudokuGrid[1]) {
         noStroke(); // remove stroke for text
         textAlign(CENTER, CENTER); // align text to center of cell
         textSize(20); // set text size
@@ -113,18 +86,18 @@ function drawNumbers() {
             // loop through rows
             for (let col = 0; col < 9; col++) {
                 // loop through columns
-                if (sudokuGrid[row][col] !== 0) {
-                    // if number is not zero
-                    if (fixedCells && fixedCells[row][col]) {
-                        fill(0); // black for fixed numbers
+                if (sudokuGrid[0][row][col] !== 0) {
+                    // if number is not zero from sudokuGrid[0]
+                    if (sudokuGrid[1][row][col] === false) {
+                        fill(0); // black for un-editable numbers
                     } else {
-                        fill(29, 78, 216); // blue for user numbers
+                        fill(29, 78, 216); // blue for user input numbers (editable)
                     }
 
                     // calculate position from width and height of rows and columns
                     let x = (col * width) / 9 + width / 18;
                     let y = (row * height) / 9 + height / 18;
-                    text(sudokuGrid[row][col], x, y); // place number in cell
+                    text(sudokuGrid[0][row][col], x, y); // place number from sudokuGrid[0]
                 }
             }
         }
@@ -155,12 +128,12 @@ function mousePressed() {
 function keyPressed() {
     // check if a cell is selected
     if (selectedRow >= 0 && selectedCol >= 0) {
-        // check if the cell is not a fixed numbers
-        if (!fixedCells || !fixedCells[selectedRow][selectedCol]) {
+        // check if the cell is editable (true means editable)
+        if (sudokuGrid[1][selectedRow][selectedCol] === true) {
             if (key >= "1" && key <= "9") {
                 // if key is a number between 1-9
                 let num = parseInt(key);
-                sudokuGrid[selectedRow][selectedCol] = num; // set the cell (array) to input number
+                sudokuGrid[0][selectedRow][selectedCol] = num; // set the cell in sudokuGrid[0]
             } else if (
                 // if key is delete, backspace, or space
                 keyCode === DELETE ||
@@ -168,17 +141,19 @@ function keyPressed() {
                 keyCode === " "
             ) {
                 // clear the cell
-                sudokuGrid[selectedRow][selectedCol] = 0;
+                sudokuGrid[0][selectedRow][selectedCol] = 0;
             }
         }
     }
 }
 
 function saveFile() {
+    console.log(sudokuGrid);
     let content = sudokuGrid
         .map((row) => row.join(" "))
         .join("\n")
         .trim();
+    console.log(content);
 
     const blob = new Blob([content], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
@@ -211,6 +186,7 @@ function loadFile() {
                         .map((num) => parseInt(num))
                 );
             fixedCells = sudokuGrid.map((row) => row.map((num) => num !== 0));
+            console.log(sudokuGrid);
         }
     };
     input.click();
