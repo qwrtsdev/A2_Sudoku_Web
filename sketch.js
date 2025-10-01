@@ -3,8 +3,9 @@ let selectedRow = -1; // currently selected cell (row)
 let selectedCol = -1; // currently selected cell (column)
 
 function setup() {
-    createCanvas(500, 500);
+    createCanvas(500, 500); // create a 500x500 pixel canvas
 
+    // initialize a 9x9 grid with all zeros and all editable cells
     sudokuGrid = [
         [
             [0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -64,7 +65,7 @@ function highlightSelectedCell() {
         let cellWidth = width / 9;
         let cellHeight = height / 9;
 
-        // draw rectangle on selected cell
+        // draw rectangle background on selected cell
         rect(
             selectedCol * cellWidth,
             selectedRow * cellHeight,
@@ -85,9 +86,9 @@ function drawNumbers() {
             for (let col = 0; col < 9; col++) {
                 // loop through columns
 
-                // Add grey background for un-editable cells
+                // add grey background for un-editable cells
                 if (sudokuGrid[1][row][col] === false) {
-                    fill(200); // grey 300 background for un-editable cells
+                    fill(180); // grey background for un-editable cells
                     noStroke();
                     rect(
                         col * cellWidth,
@@ -97,7 +98,7 @@ function drawNumbers() {
                     );
                 }
 
-                // Draw numbers
+                // draw numbers
                 if (sudokuGrid[0][row][col] !== 0) {
                     // if number is not zero from sudokuGrid[0]
                     noStroke(); // remove stroke for text
@@ -164,11 +165,13 @@ function keyPressed() {
 }
 
 function saveFile() {
+    // create a string of the sudokuGrid
     let content = sudokuGrid
         .map((row) => row.join("*"))
         .join("\n#\n")
         .trim();
 
+    // create a blob and a link with metadeta
     const blob = new Blob([content], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -176,23 +179,28 @@ function saveFile() {
     const date = new Date();
     a.download = `${date.toISOString()}.sudoku`;
 
+    // simulate a click to download the file
     document.body.appendChild(a);
     a.click();
 
+    // remove the link
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 }
 
 function loadFile() {
+    // create an input element for selecting a file
     const input = document.createElement("input");
-    input.type = "file";
-    input.accept = ".sudoku";
+    input.type = "file"; // specify input type
+    input.accept = ".sudoku"; // specify accepted file type for only .sudoku
 
+    // event listener for when a file is selected
     input.onchange = async (event) => {
-        const file = event.target.files[0];
+        const file = event.target.files[0]; // get the first selected file
 
         if (file) {
-            const text = await file.text();
+            const text = await file.text(); // read the file content as text string
+            // split the string into lines
             const loadedData = text
                 .trim()
                 .split("\n#\n")
@@ -203,10 +211,12 @@ function loadFile() {
                         .map((row) => row.split(","))
                 );
 
+            // parse the numbers into sudokuGrid
             sudokuGrid[0] = loadedData[0].map((row) =>
                 row.map((num) => parseInt(num))
             );
 
+            // parse the booleans into sudokuGrid
             sudokuGrid[1] = loadedData[1].map((row) =>
                 row.map((bool) => {
                     if (bool === "true") return true;
@@ -214,9 +224,10 @@ function loadFile() {
                 })
             );
 
+            // reset selected cell
             selectedRow = -1;
             selectedCol = -1;
         }
     };
-    input.click();
+    input.click(); // simulate a click to open file dialog
 }
