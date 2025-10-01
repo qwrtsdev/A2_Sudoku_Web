@@ -1,5 +1,4 @@
 let sudokuGrid; // current state of the Sudoku grid
-let fixedCells; // track pre-generated grids
 let selectedRow = -1; // currently selected cell (row)
 let selectedCol = -1; // currently selected cell (column)
 
@@ -30,8 +29,6 @@ function setup() {
             [true, true, true, true, true, true, true, true, true],
         ],
     ];
-
-    console.log(sudokuGrid);
 }
 
 function draw() {
@@ -61,7 +58,7 @@ function draw() {
 function highlightSelectedCell() {
     // highlight on selected cell
     if (selectedRow >= 0 && selectedCol >= 0) {
-        fill(173);
+        fill(200);
         noStroke();
 
         let cellWidth = width / 9;
@@ -167,12 +164,10 @@ function keyPressed() {
 }
 
 function saveFile() {
-    console.log(sudokuGrid);
     let content = sudokuGrid
         .map((row) => row.join("*"))
         .join("\n#\n")
         .trim();
-    console.log(content);
 
     const blob = new Blob([content], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
@@ -180,8 +175,10 @@ function saveFile() {
     a.href = url;
     const date = new Date();
     a.download = `${date.toISOString()}.sudoku`;
+
     document.body.appendChild(a);
     a.click();
+
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 }
@@ -216,8 +213,6 @@ function loadFile() {
                     else return false;
                 })
             );
-
-            console.log(sudokuGrid);
 
             selectedRow = -1;
             selectedCol = -1;
