@@ -30,10 +30,16 @@ function setup() {
             [true, true, true, true, true, true, true, true, true],
         ],
     ];
+
+    console.log(sudokuGrid);
 }
 
 function draw() {
     background(220); // set background color
+
+    highlightSelectedCell(); // highlight the selected cell
+
+    drawNumbers(); // draw the numbers in the grid
 
     // draw tiny 3*3 grids with thin lines
     stroke(0);
@@ -50,10 +56,6 @@ function draw() {
     line((2 * width) / 3, 0, (2 * width) / 3, height);
     line(0, height / 3, width, height / 3);
     line(0, (2 * height) / 3, width, (2 * height) / 3);
-
-    highlightSelectedCell(); // highlight the selected cell
-
-    drawNumbers(); // draw the numbers in the grid
 }
 
 function highlightSelectedCell() {
@@ -191,32 +193,31 @@ function loadFile() {
 
     input.onchange = async (event) => {
         const file = event.target.files[0];
+
         if (file) {
-            const text = file.text();
-            loadedData = text
+            const text = await file.text();
+            const loadedData = text
                 .trim()
                 .split("\n#\n")
                 .map((line) =>
                     line
                         .trim()
                         .split("*")
-                        .map((num) => parseInt(num))
+                        .map((row) => row.split(","))
                 );
-            fixedCells = sudokuGrid.map((row) => row.map((num) => num !== 0));
 
-            numberData = await loadedData1[0].split("*");
-            checkedData = await loadedData1[1].split("*");
-
-            sudokuGrid[0] = await numberData.map((row) =>
-                row.split(",").map((num) => parseInt(num))
+            sudokuGrid[0] = loadedData[0].map((row) =>
+                row.map((num) => parseInt(num))
             );
-            sudokuGrid[1] = await checkedData.map((row) => row.split(","));
 
-            // sudokuGrid = [splitData1, splitData2];
-            // fixedCells = sudokuGrid[1].map((row) => row.map((val) => val === false));
+            sudokuGrid[1] = loadedData[1].map((row) =>
+                row.map((bool) => {
+                    if (bool === "true") return true;
+                    else return false;
+                })
+            );
 
-            // console.log(splitData1);
-            // console.log(splitData2);
+            console.log(sudokuGrid);
 
             selectedRow = -1;
             selectedCol = -1;
