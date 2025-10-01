@@ -78,16 +78,33 @@ function highlightSelectedCell() {
 function drawNumbers() {
     // display numbers in the grid
     if (sudokuGrid && sudokuGrid[0] && sudokuGrid[1]) {
-        noStroke(); // remove stroke for text
-        textAlign(CENTER, CENTER); // align text to center of cell
-        textSize(20); // set text size
+        let cellWidth = width / 9;
+        let cellHeight = height / 9;
 
         for (let row = 0; row < 9; row++) {
             // loop through rows
             for (let col = 0; col < 9; col++) {
                 // loop through columns
+
+                // Add grey background for un-editable cells
+                if (sudokuGrid[1][row][col] === false) {
+                    fill(200); // grey 300 background for un-editable cells
+                    noStroke();
+                    rect(
+                        col * cellWidth,
+                        row * cellHeight,
+                        cellWidth,
+                        cellHeight
+                    );
+                }
+
+                // Draw numbers
                 if (sudokuGrid[0][row][col] !== 0) {
                     // if number is not zero from sudokuGrid[0]
+                    noStroke(); // remove stroke for text
+                    textAlign(CENTER, CENTER); // align text to center of cell
+                    textSize(20); // set text size
+
                     if (sudokuGrid[1][row][col] === false) {
                         fill(0); // black for un-editable numbers
                     } else {
@@ -150,8 +167,8 @@ function keyPressed() {
 function saveFile() {
     console.log(sudokuGrid);
     let content = sudokuGrid
-        .map((row) => row.join(" "))
-        .join("\n")
+        .map((row) => row.join("*"))
+        .join("\n#\n")
         .trim();
     console.log(content);
 
@@ -160,7 +177,7 @@ function saveFile() {
     const a = document.createElement("a");
     a.href = url;
     const date = new Date();
-    a.download = `sudoku_${date.toISOString()}.sudoku`;
+    a.download = `${date.toISOString()}.sudoku`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -175,18 +192,34 @@ function loadFile() {
     input.onchange = async (event) => {
         const file = event.target.files[0];
         if (file) {
-            const text = await file.text();
-            sudokuGrid = text
+            const text = file.text();
+            loadedData = text
                 .trim()
-                .split("\n")
+                .split("\n#\n")
                 .map((line) =>
                     line
                         .trim()
-                        .split(" ")
+                        .split("*")
                         .map((num) => parseInt(num))
                 );
             fixedCells = sudokuGrid.map((row) => row.map((num) => num !== 0));
-            console.log(sudokuGrid);
+
+            numberData = await loadedData1[0].split("*");
+            checkedData = await loadedData1[1].split("*");
+
+            sudokuGrid[0] = await numberData.map((row) =>
+                row.split(",").map((num) => parseInt(num))
+            );
+            sudokuGrid[1] = await checkedData.map((row) => row.split(","));
+
+            // sudokuGrid = [splitData1, splitData2];
+            // fixedCells = sudokuGrid[1].map((row) => row.map((val) => val === false));
+
+            // console.log(splitData1);
+            // console.log(splitData2);
+
+            selectedRow = -1;
+            selectedCol = -1;
         }
     };
     input.click();
