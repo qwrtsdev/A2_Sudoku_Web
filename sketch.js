@@ -1,6 +1,7 @@
 let sudokuGrid; // current state of the Sudoku grid
 let selectedRow = -1; // currently selected cell (row)
 let selectedCol = -1; // currently selected cell (column)
+let statusMessage = "--"; // status message to display
 
 function setup() {
     createCanvas(500, 500); // create a 500x500 pixel canvas
@@ -35,6 +36,8 @@ function setup() {
 function draw() {
     background(220); // set background color
 
+    statusText();
+
     highlightSelectedCell(); // highlight the selected cell
 
     drawNumbers(); // draw the numbers in the grid
@@ -59,7 +62,7 @@ function draw() {
 function highlightSelectedCell() {
     // highlight on selected cell
     if (selectedRow >= 0 && selectedCol >= 0) {
-        fill(200);
+        fill(150);
         noStroke();
 
         let cellWidth = width / 9;
@@ -150,6 +153,14 @@ function keyPressed() {
             if (key >= "1" && key <= "9") {
                 // if key is a number between 1-9
                 let num = parseInt(key);
+
+                // Check if this number would be valid at this position
+                if (isValidNumber(num, selectedRow, selectedCol)) {
+                    statusMessage = "Okay :)";
+                } else {
+                    statusMessage = "Not Okay :(";
+                }
+
                 sudokuGrid[0][selectedRow][selectedCol] = num; // set the cell in sudokuGrid[0]
             } else if (
                 // if key is delete, backspace, or space
@@ -160,6 +171,57 @@ function keyPressed() {
                 // clear the cell
                 sudokuGrid[0][selectedRow][selectedCol] = 0;
             }
+        }
+    }
+}
+
+function isValidNumber(num, row, col) {
+    // Check row for duplicates
+    for (let c = 0; c < 9; c++) {
+        if (c !== col && sudokuGrid[0][row][c] === num) {
+            return false; // Duplicate found in row
+        }
+    }
+
+    // Check column for duplicates
+    for (let r = 0; r < 9; r++) {
+        if (r !== row && sudokuGrid[0][r][col] === num) {
+            return false; // Duplicate found in column
+        }
+    }
+
+    // Check 3x3 subgrid for duplicates
+    let boxRow = Math.floor(row / 3) * 3;
+    let boxCol = Math.floor(col / 3) * 3;
+
+    for (let r = boxRow; r < boxRow + 3; r++) {
+        for (let c = boxCol; c < boxCol + 3; c++) {
+            if ((r !== row || c !== col) && sudokuGrid[0][r][c] === num) {
+                return false; // Duplicate found in 3x3 box
+            }
+        }
+    }
+
+    return true; // Number is valid at this position
+}
+
+function statusText() {
+    const statusElement = document.querySelector(".status_text");
+    statusElement.innerHTML = statusMessage;
+
+    for (let r = 0; r < 9; r++) {
+        for (let c = 0; c < 9; c++) {
+            if (sudokuGrid[0][r][c] === 0) {
+                return;
+            }
+        }
+    }
+
+    statusElement.innerHTML = "You win! Congratulations!";
+
+    for (let r = 0; r < 9; r++) {
+        for (let c = 0; c < 9; c++) {
+            sudokuGrid[1][r][c] = false;
         }
     }
 }

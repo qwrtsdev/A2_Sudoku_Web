@@ -11,14 +11,16 @@
         <script src="libraries/p5.min.js"></script>
         <script src="libraries/p5.sound.min.js"></script>
         <script src="https://cdn.tailwindcss.com"></script>
+        <script src="sketch.js"></script>
     </head>
 
     <body class="flex flex-col gap-3">
         <span class="flex m-0 text-center justify-center">
-            <p onclick="saveFile()" class="hover:cursor-pointer text-blue-700 hover:underline">Save Game</p>
+            <p onclick="saveFile()" class="hover:cursor-pointer text-blue-700 hover:underline">Save Current State</p>
             <p>&#12539;</p>
-            <p onclick="loadFile()" class="hover:cursor-pointer text-blue-700 hover:underline">Load Game</p>
+            <p onclick="loadFile()" class="hover:cursor-pointer text-blue-700 hover:underline">Load Save File</p>
         </span>
+        <p class="status_text"></p>
         <script src="sketch.js"></script>
     </body>
 </html>
