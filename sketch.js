@@ -1,7 +1,7 @@
 let sudokuGrid; // current state of the Sudoku grid
 let selectedRow = -1; // currently selected cell (row)
 let selectedCol = -1; // currently selected cell (column)
-let statusMessage = "--"; // status message to display
+let statusMessage = "Status :"; // status message to display
 
 function setup() {
     createCanvas(500, 500); // create a 500x500 pixel canvas
@@ -36,7 +36,7 @@ function setup() {
 function draw() {
     background(220); // set background color
 
-    statusText();
+    gameEvent();
 
     highlightSelectedCell(); // highlight the selected cell
 
@@ -156,9 +156,9 @@ function keyPressed() {
 
                 // Check if this number would be valid at this position
                 if (isValidNumber(num, selectedRow, selectedCol)) {
-                    statusMessage = "Okay :)";
+                    statusMessage = "Status : Okay :)";
                 } else {
-                    statusMessage = "Not Okay :(";
+                    statusMessage = "Status : Not Okay :(";
                 }
 
                 sudokuGrid[0][selectedRow][selectedCol] = num; // set the cell in sudokuGrid[0]
@@ -205,7 +205,7 @@ function isValidNumber(num, row, col) {
     return true; // Number is valid at this position
 }
 
-function statusText() {
+function gameEvent() {
     const statusElement = document.querySelector(".status_text");
     statusElement.innerHTML = statusMessage;
 
@@ -217,7 +217,7 @@ function statusText() {
         }
     }
 
-    statusElement.innerHTML = "You win! Congratulations!";
+    statusElement.innerHTML = "You win!";
 
     for (let r = 0; r < 9; r++) {
         for (let c = 0; c < 9; c++) {

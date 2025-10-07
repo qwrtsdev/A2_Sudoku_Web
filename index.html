@@ -14,13 +14,17 @@
         <script src="sketch.js"></script>
     </head>
 
-    <body class="flex flex-col gap-3">
-        <span class="flex m-0 text-center justify-center">
-            <p onclick="saveFile()" class="hover:cursor-pointer text-blue-700 hover:underline">Save Current State</p>
-            <p>&#12539;</p>
-            <p onclick="loadFile()" class="hover:cursor-pointer text-blue-700 hover:underline">Load Save File</p>
-        </span>
-        <p class="status_text"></p>
+    <body class="flex flex-col gap-3 max-w-[500px]">
+        <div class="flex w-full items-center justify-between">
+            <p class="status_text m-0"></p>
+
+            <div class="flex flex-col items-end m-0">
+            <p onclick="saveFile()" class="hover:cursor-pointer text-blue-700 hover:underline m-0">Save Current State</p>
+            <p onclick="loadFile()" class="hover:cursor-pointer text-blue-700 hover:underline m-0">Load Save File</p>
+            </div>
+        </div>
+
         <script src="sketch.js"></script>
     </body>
+
 </html>
