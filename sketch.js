@@ -1,7 +1,7 @@
 let sudokuGrid; // current state of the Sudoku grid
 let selectedRow = -1; // currently selected cell (row)
 let selectedCol = -1; // currently selected cell (column)
-let statusMessage = "Status :"; // status message to display
+let statusMessage = "Status : "; // status message to display
 
 function setup() {
     createCanvas(500, 500); // create a 500x500 pixel canvas
@@ -248,6 +248,8 @@ function saveFile() {
     // remove the link
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+
+    statusMessage = "Save Successful.";
 }
 
 function loadFile() {
@@ -289,6 +291,10 @@ function loadFile() {
             // reset selected cell
             selectedRow = -1;
             selectedCol = -1;
+
+            statusMessage = "Load Successful.";
+        } else {
+            statusMessage = "Load Failed.";
         }
     };
     input.click(); // simulate a click to open file dialog
