@@ -206,9 +206,11 @@ function isValidNumber(num, row, col) {
 }
 
 function gameEvent() {
+    // select status text element in HTML
     const statusElement = document.querySelector(".status_text");
     statusElement.innerHTML = statusMessage;
 
+    // check sudokuGrid[0] for any zeros
     for (let r = 0; r < 9; r++) {
         for (let c = 0; c < 9; c++) {
             if (sudokuGrid[0][r][c] === 0) {
@@ -217,8 +219,10 @@ function gameEvent() {
         }
     }
 
+    // if no zeros found, player will win
     statusElement.innerHTML = "You win!";
 
+    // lock every cell so player can't edit
     for (let r = 0; r < 9; r++) {
         for (let c = 0; c < 9; c++) {
             sudokuGrid[1][r][c] = false;
