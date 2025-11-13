@@ -78,7 +78,7 @@ function highlightSelectedCell() {
     }
 }
 
-function drawNumbers(size, xAxis = undefined, yAxis = undefined) {
+function drawNumbers(size, xAxis = 0, yAxis = 0) {
     // display numbers in the grid
     if (sudokuGrid && sudokuGrid[0] && sudokuGrid[1]) {
         let cellWidth = width / 9;
@@ -114,17 +114,11 @@ function drawNumbers(size, xAxis = undefined, yAxis = undefined) {
                         fill(29, 78, 216); // blue for user input numbers (editable)
                     }
 
-                    // calculate position from parameters or default position
-                    if (xAxis !== undefined || yAxis !== undefined) {
-                        // if xAxis and yAxis are provided
-                        text(sudokuGrid[0][row][col], xAxis, yAxis); // place number from sudokuGrid[0] in provided position
-                    } else {
-                        // if xAxis and yAxis are not provided
-                        let x = (col * width) / 9 + width / 18;
-                        let y = (row * height) / 9 + height / 18;
+                    // calculate position to draw the number + offset by xAxis and yAxis parameter
+                    let x = (col + xAxis) * cellWidth + cellWidth / 2;
+                    let y = (row + yAxis) * cellHeight + cellHeight / 2;
 
-                        text(sudokuGrid[0][row][col], x, y); // place number from sudokuGrid[0] in the cell
-                    }
+                    text(sudokuGrid[0][row][col], x, y); // place number from sudokuGrid[0]
                 }
             }
         }
