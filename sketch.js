@@ -1,7 +1,7 @@
 let sudokuGrid; // current state of the Sudoku grid
 let selectedRow = -1; // currently selected cell (row)
 let selectedCol = -1; // currently selected cell (column)
-let statusMessage = "Status : "; // status message to display
+let statusMessage = "Status : ..."; // status message to display
 
 function setup() {
     createCanvas(500, 500); // create a 500x500 pixel canvas
@@ -40,7 +40,7 @@ function draw() {
 
     highlightSelectedCell(); // highlight the selected cell
 
-    drawNumbers(); // draw the numbers in the grid
+    drawNumbers(20); // draw the numbers in the grid
 
     // draw tiny 3*3 grids with thin lines
     stroke(0);
@@ -78,7 +78,7 @@ function highlightSelectedCell() {
     }
 }
 
-function drawNumbers() {
+function drawNumbers(size, xAxis = undefined, yAxis = undefined) {
     // display numbers in the grid
     if (sudokuGrid && sudokuGrid[0] && sudokuGrid[1]) {
         let cellWidth = width / 9;
@@ -106,7 +106,7 @@ function drawNumbers() {
                     // if number is not zero from sudokuGrid[0]
                     noStroke(); // remove stroke for text
                     textAlign(CENTER, CENTER); // align text to center of cell
-                    textSize(20); // set text size
+                    textSize(size); // set text size from parameter
 
                     if (sudokuGrid[1][row][col] === false) {
                         fill(0); // black for un-editable numbers
@@ -114,10 +114,17 @@ function drawNumbers() {
                         fill(29, 78, 216); // blue for user input numbers (editable)
                     }
 
-                    // calculate position from width and height of rows and columns
-                    let x = (col * width) / 9 + width / 18;
-                    let y = (row * height) / 9 + height / 18;
-                    text(sudokuGrid[0][row][col], x, y); // place number from sudokuGrid[0]
+                    // calculate position from parameters or default position
+                    if (xAxis !== undefined || yAxis !== undefined) {
+                        // if xAxis and yAxis are provided
+                        text(sudokuGrid[0][row][col], xAxis, yAxis); // place number from sudokuGrid[0] in provided position
+                    } else {
+                        // if xAxis and yAxis are not provided
+                        let x = (col * width) / 9 + width / 18;
+                        let y = (row * height) / 9 + height / 18;
+
+                        text(sudokuGrid[0][row][col], x, y); // place number from sudokuGrid[0] in the cell
+                    }
                 }
             }
         }
