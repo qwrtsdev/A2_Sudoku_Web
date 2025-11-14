@@ -2,6 +2,7 @@ let sudokuGrid; // current state of the Sudoku grid
 let selectedRow = -1; // currently selected cell (row)
 let selectedCol = -1; // currently selected cell (column)
 let statusMessage = "Status : ..."; // status message to display
+let emptyCellCount = "Empty cells : 0"; // count of empty cells in the grid
 
 function setup() {
     createCanvas(500, 500); // create a 500x500 pixel canvas
@@ -211,6 +212,10 @@ function gameEvent() {
     const statusElement = document.querySelector(".status_text");
     statusElement.innerHTML = statusMessage;
 
+    // select empty cell text element in HTML
+    const emptyCellElement = document.querySelector(".emptycell_text");
+    emptyCellElement.innerHTML = `Empty cells : ${countEmptyCells()}`;
+
     // check sudokuGrid[0] for any zeros
     for (let r = 0; r < 9; r++) {
         for (let c = 0; c < 9; c++) {
@@ -303,4 +308,19 @@ function loadFile() {
         }
     };
     input.click(); // simulate a click to open file dialog
+}
+
+// function to count empty cells in the sudoku grid
+function countEmptyCells() {
+    let cellCount = 0; // initialize count of empty cells
+    for (let row = 0; row < 9; row++) {
+        for (let col = 0; col < 9; col++) {
+            if (sudokuGrid[0][row][col] === 0) {
+                // check if cell is empty
+                cellCount++; // if yes, increment count
+            }
+        }
+    }
+
+    return cellCount; // return the total count of empty cells
 }
