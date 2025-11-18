@@ -2,7 +2,8 @@ let sudokuGrid; // current state of the Sudoku grid
 let selectedRow = -1; // currently selected cell (row)
 let selectedCol = -1; // currently selected cell (column)
 let statusMessage = "Status : ..."; // status message to display
-let emptyCellCount = "Empty cells : 0"; // count of empty cells in the grid
+let emptyCellCount =
+    "[Row 1 : 0] [Row 2 : 0] [Row 3 : 0]<br />[Row 4 : 0] [Row 5 : 0] [Row 6 : 0]<br />[Row 7 : 0] [Row 8 : 0] [Row 9 : 0]"; // count of empty cells in the grid
 
 function setup() {
     createCanvas(500, 500); // create a 500x500 pixel canvas
@@ -214,7 +215,15 @@ function gameEvent() {
 
     // select empty cell text element in HTML
     const emptyCellElement = document.querySelector(".emptycell_text");
-    emptyCellElement.innerHTML = `Empty cells : ${countEmptyCells()}`;
+    emptyCellElement.innerHTML = `[Row 1 : ${countEmptyCells(
+        0
+    )}] [Row 2 : ${countEmptyCells(1)}] [Row 3 : ${countEmptyCells(
+        2
+    )}]<br />[Row 4 : ${countEmptyCells(3)}] [Row 5 : ${countEmptyCells(
+        4
+    )}] [Row 6 : ${countEmptyCells(5)}]<br />[Row 7 : ${countEmptyCells(
+        6
+    )}] [Row 8 : ${countEmptyCells(7)}] [Row 9 : ${countEmptyCells(8)}]`;
 
     // check sudokuGrid[0] for any zeros
     for (let r = 0; r < 9; r++) {
@@ -310,17 +319,15 @@ function loadFile() {
     input.click(); // simulate a click to open file dialog
 }
 
-// function to count empty cells in the sudoku grid
-function countEmptyCells() {
-    let cellCount = 0; // initialize count of empty cells
-    for (let row = 0; row < 9; row++) {
-        for (let col = 0; col < 9; col++) {
-            if (sudokuGrid[0][row][col] === 0) {
-                // check if cell is empty
-                cellCount++; // if yes, increment count
-            }
+// function to count empty cells in the rows of the sudoku grid
+function countEmptyCells(row) {
+    let cellCount = 0; // initialize count of empty cells in the row
+    for (let col = 0; col < 9; col++) {
+        if (sudokuGrid[0][row][col] === 0) {
+            // check if cell is empty
+            cellCount++; // if yes, increment count
         }
     }
 
-    return cellCount; // return the total count of empty cells
+    return cellCount; // return the total count of empty cells in the row
 }
