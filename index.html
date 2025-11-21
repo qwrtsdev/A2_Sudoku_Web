@@ -16,9 +16,12 @@
 
     <body class="flex flex-col gap-3 max-w-[500px]">
         <div class="flex w-full items-center justify-between">
-            <div class="flex flex-col flex-wrap max-w-max">
+            <div class="flex flex-col flex-wrap max-w-max" id="status">
               <p class="status_text m-0"></p>
-              <p class="emptycell_text m-0"></p>
+              <div id="quiz-input">
+                <input type="text" id="input-number" class="border border-gray-300 rounded" placeholder="" />
+                <button class="bg-blue-500 text-white rounded px-2" onclick="answerCheck()">Answer</button>
+              </div>
             </div>
 
             <div class="flex flex-col items-end m-0">

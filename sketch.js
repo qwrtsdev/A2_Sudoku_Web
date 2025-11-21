@@ -1,11 +1,17 @@
 let sudokuGrid; // current state of the Sudoku grid
 let selectedRow = -1; // currently selected cell (row)
 let selectedCol = -1; // currently selected cell (column)
-let statusMessage = "Status : ..."; // status message to display
-let emptyCellCount =
-    "[Row 1 : 0] [Row 2 : 0] [Row 3 : 0]<br />[Row 4 : 0] [Row 5 : 0] [Row 6 : 0]<br />[Row 7 : 0] [Row 8 : 0] [Row 9 : 0]"; // count of empty cells in the grid
+let statusMessage = "Please load a puzzle"; // status message to display
+let fileLoadedStatus = false; // flag to check if a file is loaded
+let sudokuPlayStatus = false; // status of the sudoku game (playable or not)
+let currentQuizRow = 0; // current row for empty cells quiz
 
 function setup() {
+    // get quiz div element
+    const quizDiv = document.getElementById("quiz-input");
+    quizDiv.classList.add("hidden"); // hide the quiz input div
+    quizDiv.classList.remove("block");
+
     createCanvas(500, 500); // create a 500x500 pixel canvas
 
     // initialize a 9x9 grid with all zeros and all editable cells
@@ -40,7 +46,12 @@ function draw() {
 
     gameEvent();
 
-    highlightSelectedCell(); // highlight the selected cell
+    // if player is in play mode
+    if (sudokuPlayStatus) {
+        highlightSelectedCell(); // highlight the selected cell
+    } else {
+        emptyCellsQuizEnd(); // if not, check if quiz has ended
+    }
 
     drawNumbers(20); // draw the numbers in the grid
 
@@ -59,6 +70,11 @@ function draw() {
     line((2 * width) / 3, 0, (2 * width) / 3, height);
     line(0, height / 3, width, height / 3);
     line(0, (2 * height) / 3, width, (2 * height) / 3);
+
+    // if in quiz mode, highlight the current quiz row
+    if (!sudokuPlayStatus) {
+        highlightEmptyCells(currentQuizRow);
+    }
 }
 
 function highlightSelectedCell() {
@@ -213,18 +229,6 @@ function gameEvent() {
     const statusElement = document.querySelector(".status_text");
     statusElement.innerHTML = statusMessage;
 
-    // select empty cell text element in HTML
-    const emptyCellElement = document.querySelector(".emptycell_text");
-    emptyCellElement.innerHTML = `[Row 1 : ${countEmptyCells(
-        0
-    )}] [Row 2 : ${countEmptyCells(1)}] [Row 3 : ${countEmptyCells(
-        2
-    )}]<br />[Row 4 : ${countEmptyCells(3)}] [Row 5 : ${countEmptyCells(
-        4
-    )}] [Row 6 : ${countEmptyCells(5)}]<br />[Row 7 : ${countEmptyCells(
-        6
-    )}] [Row 8 : ${countEmptyCells(7)}] [Row 9 : ${countEmptyCells(8)}]`;
-
     // check sudokuGrid[0] for any zeros
     for (let r = 0; r < 9; r++) {
         for (let c = 0; c < 9; c++) {
@@ -281,6 +285,7 @@ function loadFile() {
     input.onchange = async (event) => {
         const file = event.target.files[0]; // get the first selected file
 
+        // if a file is selected
         if (file) {
             const text = await file.text(); // read the file content as text string
             // split the string into lines
@@ -311,17 +316,49 @@ function loadFile() {
             selectedRow = -1;
             selectedCol = -1;
 
-            statusMessage = "Load Successful.";
+            // change status message to quiz mode
+            statusMessage = `Enter the number of empty cells in row ${
+                currentQuizRow + 1
+            }`;
+
+            // get quiz input div element
+            const quizDiv = document.getElementById("quiz-input");
+            quizDiv.classList.add("block"); // show the quiz input div
+            quizDiv.classList.remove("hidden");
+
+            fileLoadedStatus = true; // set file loaded status to true
+
+            // get main element in HTML for adding empty cells answers
+            const mainElement = document.getElementsByTagName("main")[0];
+            const subElement = document.createElement("div"); // create sub element for inside main
+            mainElement.classList.add("flex", "flex-row");
+            subElement.classList.add("flex", "flex-col", "items-center");
+
+            // create 9 div elements for displaying answers
+            for (let i = 0; i < 9; i++) {
+                const space = document.createElement("div");
+                space.classList.add(
+                    `max-h-[${height / 9}px]`,
+                    "h-full",
+                    "justify-center",
+                    "flex",
+                    "items-center"
+                );
+                space.id = `col-${i}`;
+                subElement.appendChild(space);
+            }
+
+            mainElement.appendChild(subElement); // append sub element to be inside main
         } else {
-            statusMessage = "Load Failed.";
+            statusMessage = "Load Failed."; // update status message if load failed
         }
     };
     input.click(); // simulate a click to open file dialog
 }
 
-// function to count empty cells in the rows of the sudoku grid
 function countEmptyCells(row) {
     let cellCount = 0; // initialize count of empty cells in the row
+
     for (let col = 0; col < 9; col++) {
         if (sudokuGrid[0][row][col] === 0) {
             // check if cell is empty
@@ -330,4 +367,59 @@ function countEmptyCells(row) {
     }
 
     return cellCount; // return the total count of empty cells in the row
+}
+
+function highlightEmptyCells(row) {
+    // if file is loaded
+    if (fileLoadedStatus) {
+        fill(0, 0, 0, 0);
+        stroke(255, 0, 0);
+        strokeWeight(4);
+
+        let cellHeight = height / 9;
+
+        // draw a frame that stretch across the entire row
+        rect(0, row * cellHeight, width, cellHeight);
+    }
+}
+
+function answerCheck() {
+    // get the answer value from input field element
+    const answerElement = document.getElementById("input-number");
+    const answer = parseInt(answerElement.value);
+
+    // check if the answer is correct
+    if (answer === countEmptyCells(currentQuizRow)) {
+        // get the right side text element in HTML
+        const colNumberElement = document.getElementById(
+            `col-${currentQuizRow}`
+        );
+        colNumberElement.classList.add("pl-8");
+        colNumberElement.innerHTML = `${answer}`; // display the correct answer on the right side
+        currentQuizRow++; // move to the next row
+
+        statusMessage = `Enter the number of empty cells in row ${
+            currentQuizRow + 1
+        }`; // update status message
+    } else {
+        // if the answer is wrong
+        statusMessage = "Wrong answer try again."; // update status message
+    }
+
+    answerElement.value = ""; // clear the input field element
+}
+
+function emptyCellsQuizEnd() {
+    // check if all rows have been answered
+    if (currentQuizRow > 8) {
+        // get the quiz input div element
+        const quizElement = document.getElementById("quiz-input");
+        quizElement.classList.add("hidden"); // hide the quiz input div
+        quizElement.classList.remove("block");
+
+        statusMessage = "Status : ..."; // reset status message to normal status
+
+        noStroke();
+        sudokuPlayStatus = true; // change state to be able to play normal sudoku
+    }
 }
